@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>New Woman Line Di Mancuso Rosalba — Bologna</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--purple:#c084fc;--dark:#1a1a1a;--light:#faf9f7}
+body{font-family:'Inter',sans-serif;background:var(--light);color:var(--dark)}
+h1,h2,h3,h4{font-family:'Cormorant Garamond',serif}
+
+/* BANNER ACQUISTO */
+#buy-banner{position:fixed;top:0;left:0;width:100%;background:#000;color:#fff;z-index:9999;padding:10px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+#buy-banner p{font-size:14px;line-height:1.3}
+#buy-banner a{background:#ff4d00;color:#fff;text-decoration:none;padding:8px 18px;border-radius:4px;font-size:13px;font-weight:500;white-space:nowrap;flex-shrink:0}
+@media(max-width:600px){#buy-banner p{font-size:12px}#buy-banner .desktop-text{display:none}#buy-banner .mobile-text{display:block}}
+@media(min-width:601px){#buy-banner .mobile-text{display:none}}
+
+/* HERO */
+.hero{height:100vh;background:url('https://images.unsplash.com/photo-1562322140-8baeececf3df?w=1920&q=80') center/cover no-repeat;position:relative;display:flex;align-items:center;justify-content:center;text-align:center;margin-top:44px}
+.hero::before{content:'';position:absolute;inset:0;background:rgba(0,0,0,0.45)}
+.hero-content{position:relative;z-index:1;color:#fff;padding:0 20px}
+.hero-content h1{font-size:clamp(2.4rem,6vw,5rem);font-weight:300;letter-spacing:0.04em;text-shadow:0 2px 20px rgba(0,0,0,0.4)}
+.hero-content p{font-size:1.1rem;margin-top:12px;opacity:0.9;font-weight:300}
+.hero-content .cta{display:inline-block;margin-top:28px;padding:14px 36px;background:var(--purple);color:#fff;text-decoration:none;font-size:1rem;letter-spacing:0.08em;border-radius:2px}
+.rating-badge{margin-top:20px;font-size:1.1rem;color:#ffd700}
+
+/* NUMERI */
+.numeri{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:0;background:#fff;border-top:3px solid var(--purple)}
+.numero{padding:40px 20px;text-align:center;border-right:1px solid #eee}
+.numero:last-child{border-right:none}
+.numero span{display:block;font-family:'Cormorant Garamond',serif;font-size:3rem;color:var(--purple);font-weight:300}
+.numero p{font-size:0.8rem;letter-spacing:0.12em;text-transform:uppercase;color:#666;margin-top:6px}
+
+/* SERVIZI */
+.section{padding:80px 5% 60px}
+.section-title{font-size:clamp(1.8rem,4vw,3rem);font-weight:300;text-align:center;margin-bottom:12px}
+.section-sub{text-align:center;color:#666;font-size:0.95rem;margin-bottom:50px}
+.services-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;max-width:1100px;margin:0 auto}
+.service-card{background:#fff;padding:32px;border-radius:4px;border-left:3px solid var(--purple);box-shadow:0 2px 12px rgba(0,0,0,0.06)}
+.service-card h3{font-size:1.3rem;font-weight:400;margin-bottom:8px}
+.service-card p{color:#666;font-size:0.9rem;line-height:1.6;margin-bottom:16px}
+.service-price{font-size:1.4rem;color:var(--purple);font-family:'Cormorant Garamond',serif}
+
+/* CHI SIAMO */
+.about{background:#fff;padding:80px 5%}
+.about-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+@media(max-width:768px){.about-inner{grid-template-columns:1fr}}
+.about-imgs{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.about-imgs img{width:100%;height:200px;object-fit:cover;border-radius:2px}
+.about-imgs img:first-child{grid-column:1/-1;height:250px}
+.about-text h2{font-size:2.4rem;font-weight:300;margin-bottom:20px}
+.about-text p{color:#555;line-height:1.8;margin-bottom:16px}
+
+/* GALLERIA */
+.gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:4px}
+.gallery img{width:100%;height:220px;object-fit:cover;display:block;transition:transform 0.3s}
+.gallery img:hover{transform:scale(1.02)}
+
+/* TESTIMONIANZE */
+.testi{background:var(--purple);padding:80px 5%;color:#fff}
+.testi .section-title{color:#fff}
+.testi .section-sub{color:rgba(255,255,255,0.8)}
+.testi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;max-width:1000px;margin:0 auto}
+.testi-card{background:rgba(255,255,255,0.12);padding:28px;border-radius:4px}
+.testi-card p{font-style:italic;line-height:1.7;margin-bottom:16px;font-family:'Cormorant Garamond',serif;font-size:1.1rem}
+.testi-card .name{font-size:0.85rem;letter-spacing:0.1em;text-transform:uppercase;opacity:0.8}
+.stars{color:#ffd700;margin-bottom:8px;font-size:1.1rem}
+
+/* ORARI */
+.orari{background:#fff;padding:80px 5%}
+.orari-inner{max-width:600px;margin:0 auto}
+.orari table{width:100%;border-collapse:collapse;margin-top:30px}
+.orari td{padding:14px 0;border-bottom:1px solid #eee;font-size:0.95rem}
+.orari td:last-child{text-align:right;color:var(--purple)}
+
+/* FAQ */
+.faq{padding:80px 5%;background:var(--light)}
+.faq-inner{max-width:800px;margin:0 auto}
+.faq-item{border-bottom:1px solid #e0e0e0;padding:20px 0}
+.faq-item summary{font-size:1.05rem;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center}
+.faq-item summary::after{content:'+';font-size:1.4rem;color:var(--purple)}
+details[open] summary::after{content:'−'}
+.faq-item p{color:#555;line-height:1.7;margin-top:14px;font-size:0.95rem}
+
+/* MAPPA */
+#map{height:400px;width:100%}
+
+/* CONTATTI */
+.contatti{background:#1a1a1a;color:#fff;padding:60px 5%;text-align:center}
+.contatti h2{font-size:2rem;font-weight:300;margin-bottom:8px}
+.contatti p{color:#aaa;margin-bottom:6px}
+.contatti a{color:var(--purple);text-decoration:none}
+
+/* FOOTER */
+footer{background:#111;color:#666;text-align:center;padding:24px;font-size:0.8rem}
+footer a{color:#888;cursor:pointer}
+
+/* WHATSAPP */
+.wa-btn{position:fixed;bottom:24px;right:24px;background:#25D366;color:#fff;width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:26px;box-shadow:0 4px 16px rgba(37,211,102,0.4);z-index:8888}
+
+/* MODAL */
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:99999;align-items:center;justify-content:center}
+.modal.open{display:flex}
+.modal-box{background:#fff;padding:40px;max-width:600px;width:90%;max-height:80vh;overflow-y:auto;border-radius:4px}
+.modal-box h3{margin-bottom:16px;font-size:1.6rem;font-weight:300}
+.modal-box p{color:#555;line-height:1.7;font-size:0.9rem;margin-bottom:10px}
+.modal-close{float:right;background:none;border:1px solid #ccc;padding:6px 14px;cursor:pointer;border-radius:2px}
+</style>
+</head>
+<body>
+
+<!-- BANNER ACQUISTO -->
+<div id="buy-banner">
+  <p class="desktop-text">Ti piace questo sito? Il tuo potrebbe essere identico — online in 5 giorni per €99</p>
+  <p class="mobile-text">Vuoi un sito così? €99</p>
+  <a href="https://buy.stripe.com/8x25kC7mo39M0bN1Mv1B601" target="_blank">Inizia ora →</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-content">
+    <h1>New Woman Line Di Mancuso Rosalba</h1>
+    <p>Via di Corticella, 57 · Bologna</p>
+    <div class="rating-badge">★★★★★ 5.0 · 4 recensioni</div>
+    <a href="https://wa.me/39051357875" class="cta" target="_blank">Prenota ora via WhatsApp</a>
+  </div>
+</section>
+
+<!-- NUMERI -->
+<div class="numeri">
+  <div class="numero"><span>5.0</span><p>Rating Google</p></div>
+  <div class="numero"><span>4</span><p>Recensioni</p></div>
+  <div class="numero"><span>15+</span><p>Anni di esperienza</p></div>
+  <div class="numero"><span>Bologna</span><p>Città</p></div>
+</div>
+
+<!-- SERVIZI -->
+<section class="section" style="background:var(--light)">
+  <h2 class="section-title">I Nostri Servizi</h2>
+  <p class="section-sub">Trattamenti professionali per ogni esigenza</p>
+  <div class="services-grid">
+    <div class="service-card"><h3>Taglio Donna</h3><p>Taglio su misura con consulenza personalizzata per valorizzare la tua forma del viso.</p><div class="service-price">da €35</div></div>
+    <div class="service-card"><h3>Colore & Meches</h3><p>Colorazioni professionali con prodotti di alta qualità per un risultato luminoso e duraturo.</p><div class="service-price">da €55</div></div>
+    <div class="service-card"><h3>Piega & Styling</h3><p>Piega professionale con phon, piastra o arricciacapelli per ogni occasione.</p><div class="service-price">da €20</div></div>
+    <div class="service-card"><h3>Trattamenti Capelli</h3><p>Maschere nutrienti, trattamenti keratina e ricostruzione per capelli sani e forti.</p><div class="service-price">da €30</div></div>
+    <div class="service-card"><h3>Taglio Uomo</h3><p>Taglio classico o moderno con finiture impeccabili. Anche barba su richiesta.</p><div class="service-price">da €20</div></div>
+    <div class="service-card"><h3>Acconciature Sposa</h3><p>Acconciature per matrimoni ed eventi speciali. Prova inclusa su appuntamento.</p><div class="service-price">da €80</div></div>
+  </div>
+</section>
+
+<!-- CHI SIAMO -->
+<section class="about">
+  <div class="about-inner">
+    <div class="about-imgs">
+      <img src="https://images.unsplash.com/photo-1560066984-138dadb4c035?w=600&q=80" alt="Il salone">
+      <img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600&q=80" alt="Il team">
+      <img src="https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?w=600&q=80" alt="I nostri prodotti">
+    </div>
+    <div class="about-text">
+      <h2>Chi Siamo</h2>
+      <p>Siamo un salone con oltre 15 anni di esperienza nel cuore di Bologna. La nostra passione per i capelli si riflette in ogni servizio che offriamo, con attenzione ai dettagli e cura per ogni cliente.</p>
+      <p>Il nostro team di professionisti si aggiorna costantemente sulle ultime tendenze e tecniche del settore, per offrirti sempre il meglio.</p>
+      <p>Utilizziamo solo prodotti di qualità professionale, rispettosi dei capelli e dell'ambiente, per garantire risultati eccellenti e duraturi.</p>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERIA -->
+<div class="gallery">
+  <img src="https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=600&q=80" alt="Galleria 1"><img src="https://images.unsplash.com/photo-1604654894610-df63bc536371?w=600&q=80" alt="Galleria 2"><img src="https://images.unsplash.com/photo-1492106087820-71f1a00d2b11?w=600&q=80" alt="Galleria 3"><img src="https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?w=600&q=80" alt="Galleria 4"><img src="https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?w=600&q=80" alt="Galleria 5">
+</div>
+
+<!-- TESTIMONIANZE -->
+<section class="testi">
+  <h2 class="section-title">Cosa Dicono di Noi</h2>
+  <p class="section-sub">Le recensioni dei nostri clienti soddisfatti</p>
+  <div class="testi-grid">
+    <div class="testi-card"><div class="stars">★★★★★</div><p>"Finalmente ho trovato il mio salone di fiducia a Bologna! Professionalità e gentilezza, risultati sempre perfetti. Lo consiglio a tutte le mie amiche."</p><div class="name">— Giulia M., cliente dal 2019</div></div>
+    <div class="testi-card"><div class="stars">★★★★★</div><p>"Ho fatto il colore qui per la prima volta e sono rimasta stupita. Capelli brillanti e sani, nessun danno. Prezzi onesti e personale super competente."</p><div class="name">— Laura P., cliente dal 2021</div></div>
+    <div class="testi-card"><div class="stars">★★★★☆</div><p>"Ambiente accogliente e rilassante. Mi hanno consigliato il taglio giusto per la mia forma del viso. Uscita soddisfattissima, ci torno sicuramente!"</p><div class="name">— Martina F., cliente dal 2022</div></div>
+  </div>
+</section>
+
+<!-- ORARI -->
+<section class="orari">
+  <div class="orari-inner">
+    <h2 class="section-title" style="text-align:left">Orari di Apertura</h2>
+    <table>
+      <tr><td>Lunedì</td><td>Chiuso</td></tr>
+      <tr><td>Martedì</td><td>09:00 – 18:30</td></tr>
+      <tr><td>Mercoledì</td><td>09:00 – 18:30</td></tr>
+      <tr><td>Giovedì</td><td>09:00 – 18:30</td></tr>
+      <tr><td>Venerdì</td><td>09:00 – 19:00</td></tr>
+      <tr><td>Sabato</td><td>08:30 – 17:00</td></tr>
+      <tr><td>Domenica</td><td>Chiuso</td></tr>
+    </table>
+    <p style="margin-top:20px;color:#888;font-size:0.9rem">* Si consiglia la prenotazione. Contattaci su WhatsApp o al telefono.</p>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq">
+  <div class="faq-inner">
+    <h2 class="section-title">Domande Frequenti</h2>
+    <p class="section-sub" style="text-align:center;margin-bottom:40px">Tutto quello che devi sapere</p>
+    <details class="faq-item"><summary>Devo prenotare in anticipo o posso venire senza appuntamento?</summary><p>Consigliamo sempre di prenotare per garantire la disponibilità del tuo stylist preferito. Tuttavia, accettiamo anche clienti senza appuntamento quando possibile. Contattaci su WhatsApp per verificare la disponibilità.</p></details>
+    <details class="faq-item"><summary>Quanto dura mediamente un trattamento colore?</summary><p>Un trattamento colore completo richiede in media 2-3 ore, a seconda del tipo di colorazione e della lunghezza dei capelli. Per le meches o il balayage, prevedere anche 3-4 ore. Ti consigliamo di prenotare con anticipo.</p></details>
+    <details class="faq-item"><summary>Utilizzate prodotti privi di ammoniaca?</summary><p>Sì, offriamo sia colorazioni tradizionali che alternative senza ammoniaca per chi ha capelli sensibili o preferisce prodotti più delicati. Il nostro team ti consiglierà il trattamento più adatto alla tua situazione.</p></details>
+    <details class="faq-item"><summary>Fate anche acconciature per eventi e matrimoni?</summary><p>Assolutamente sì! Offriamo un servizio completo per sposa e damigelle, con prova acconciatura inclusa. Contattateci con anticipo per organizzare il servizio nel giorno del vostro evento speciale.</p></details>
+    <details class="faq-item"><summary>Quali metodi di pagamento accettate?</summary><p>Accettiamo contanti, carte di credito e debito, e pagamenti digitali come Apple Pay e Google Pay. Il pagamento avviene al termine del servizio.</p></details>
+  </div>
+</section>
+
+<!-- MAPPA -->
+<div id="map"></div>
+<script>
+var map = L.map('map').setView([44.5167073, 11.3478543], 15);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap'}).addTo(map);
+L.marker([44.5167073, 11.3478543]).addTo(map).bindPopup('<b>New Woman Line Di Mancuso Rosalba</b><br>Via di Corticella, 57').openPopup();
+</script>
+
+<!-- CONTATTI -->
+<section class="contatti">
+  <h2>Contattaci</h2>
+  <p style="margin-top:16px">Via di Corticella, 57, 40128 Bologna</p>
+  <p><a href="tel:+39 051 357875">+39 051 357875</a></p>
+  <p style="margin-top:20px"><a href="https://wa.me/39051357875" target="_blank" style="background:var(--purple);color:#fff;padding:12px 28px;border-radius:2px;text-decoration:none;display:inline-block">Scrivici su WhatsApp</a></p>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2025 New Woman Line Di Mancuso Rosalba · Via di Corticella, 57, 40128 Bologna BO · <a onclick="document.getElementById('privacy-modal').classList.add('open')">Privacy Policy</a></p>
+  <p style="margin-top:8px;font-size:0.75rem;color:#444">Sito creato con <a href="https://buy.stripe.com/8x25kC7mo39M0bN1Mv1B601" style="color:#888">Simplo</a></p>
+</footer>
+
+<!-- PRIVACY MODAL -->
+<div id="privacy-modal" class="modal" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal-box">
+    <button class="modal-close" onclick="document.getElementById('privacy-modal').classList.remove('open')">Chiudi</button>
+    <h3>Privacy Policy</h3>
+    <p>Il presente sito non raccoglie dati personali degli utenti, non utilizza cookie di profilazione, non effettua tracciamento analytics.</p>
+    <p>Il sito non contiene form di contatto. Gli eventuali contatti avvengono tramite canali esterni (telefono, WhatsApp) soggetti alle proprie privacy policy.</p>
+    <p>Titolare del trattamento: New Woman Line Di Mancuso Rosalba, Via di Corticella, 57, 40128 Bologna BO.</p>
+    <p>Per qualsiasi informazione: <a href="tel:+39 051 357875">+39 051 357875</a>.</p>
+    <p>Ultimo aggiornamento: maggio 2025.</p>
+  </div>
+</div>
+
+<!-- WHATSAPP -->
+<a href="https://wa.me/39051357875" class="wa-btn" target="_blank" title="WhatsApp">&#x1F4AC;</a>
+
+</body>
+</html>
